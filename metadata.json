@@ -1,0 +1,6 @@
+{
+  "name": "The Azuki Room | Halal Japanese Izakaya, Chancery Lane",
+  "description": "A hidden Japanese dining room in Rolls Passage, off Chancery Lane. 100% halal yakitori, robatayaki, sushi and sake across a 30-cover izakaya and late lounge.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

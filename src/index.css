@@ -1,0 +1,189 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-jp: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  --color-sumi: #1a1a1a;
+  --color-binchotan: #d4a574;
+  --color-sake: #fafafa;
+  --color-smoke: #4a4a4a;
+  --color-washi: #f5f0eb;
+  --color-ember: #8b3a3a;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 5rem;
+}
+
+@media (min-width: 640px) {
+  html {
+    scroll-padding-top: 6rem;
+  }
+}
+
+body {
+  background: var(--color-sumi);
+  color: var(--color-sake);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-binchotan);
+  color: var(--color-sumi);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  :before,
+  :after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+a {
+  transition: color 0.2s;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-binchotan);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  z-index: 100;
+  background: var(--color-binchotan);
+  color: var(--color-sumi);
+  border-radius: 0 0 4px;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  text-decoration: none;
+  position: absolute;
+  top: 0;
+  left: -9999px;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  outline: 2px solid var(--color-sake);
+  outline-offset: -4px;
+  left: 0;
+}
+
+hr {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-binchotan) 20%,
+    var(--color-binchotan) 80%,
+    transparent 100%
+  );
+  opacity: 0.15;
+  border: none;
+  height: 1px;
+  margin: 3rem 0;
+}
+
+.prose-legal {
+  color: #fafafabf;
+  font-size: 0.9375rem;
+  line-height: 1.75;
+}
+
+.prose-legal p {
+  margin: 1rem 0;
+}
+
+.prose-legal h2 {
+  font-family: var(--font-serif);
+  color: var(--color-sake);
+  margin: 2.5rem 0 1rem;
+  font-size: 1.5rem;
+}
+
+.prose-legal h3 {
+  font-family: var(--font-serif);
+  color: var(--color-sake);
+  margin: 2rem 0 0.5rem;
+  font-size: 1.125rem;
+}
+
+.prose-legal ul,
+.prose-legal ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.prose-legal ul {
+  list-style: outside;
+}
+
+.prose-legal ol {
+  list-style: decimal;
+}
+
+.prose-legal li {
+  margin: 0.5rem 0;
+}
+
+.prose-legal a {
+  color: var(--color-binchotan);
+  text-underline-offset: 3px;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+.prose-legal a:hover {
+  color: var(--color-sake);
+}
+
+.prose-legal code {
+  color: var(--color-binchotan);
+  background: #d4a5741a;
+  border-radius: 3px;
+  padding: 0.125rem 0.375rem;
+  font-size: 0.85em;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-sumi);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-smoke);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-binchotan);
+}
+
+/* Smooth reveal animation for SSR hydrated sections */
+[data-animate] {
+  animation: azukiReveal 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes azukiReveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
