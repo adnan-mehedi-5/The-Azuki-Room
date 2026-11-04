@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import pagesDataRaw from './data/pagesData.json';
-import { normalizePathname, CONTACT } from './utils/siteConfig';
+import { normalizePathname, CONTACT, withBase, BASE_URL } from './utils/siteConfig';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { Footer, CookieConsent, AnnouncementNotice } from './components/FooterAndOverlays';
@@ -12,6 +12,20 @@ interface PageEntry {
 }
 
 const pagesData = pagesDataRaw as Record<string, PageEntry>;
+
+const cleanBase = (BASE_URL || '/').replace(/\/$/, '');
+
+function resolveAssetPaths(html: string): string {
+  if (!html || !cleanBase) return html;
+  return html
+    .replace(/(src|href)=(["'])\/(images|menus|videos)\//g, `$1=$2${cleanBase}/$3/`)
+    .replace(/(src|href)=(["'])\/(favicon\.ico|icon\.png|apple-icon\.png|icon-512\.png|manifest\.webmanifest)(["'])/g, `$1=$2${cleanBase}/$3$4`)
+    .replace(/url\((["']?)\/(images|menus|videos)\//g, `url($1${cleanBase}/$2/`)
+    .replace(/srcset=(["'])([^"']+)(["'])/g, (_, q1, srcsetValue, q2) => {
+      const updated = srcsetValue.replace(/(^|,\s*)\/(images|menus|videos)\//g, `$1${cleanBase}/$2/`);
+      return `srcset=${q1}${updated}${q2}`;
+    });
+}
 
 export function App() {
   const [currentRoute, setCurrentRoute] = useState<string>(() =>
@@ -25,12 +39,21 @@ export function App() {
       href.startsWith('http://') ||
       href.startsWith('https://') ||
       href.startsWith('mailto:') ||
-      href.startsWith('tel:') ||
-      href.endsWith('.pdf') ||
-      href.endsWith('.jpg') ||
-      href.endsWith('.webp')
+      href.startsWith('tel:')
     ) {
       window.location.href = href;
+      return;
+    }
+
+    if (
+      href.endsWith('.pdf') ||
+      href.endsWith('.jpg') ||
+      href.endsWith('.webp') ||
+      href.includes('/menus/') ||
+      href.includes('/images/') ||
+      href.includes('/videos/')
+    ) {
+      window.location.href = withBase(href);
       return;
     }
 
@@ -41,14 +64,14 @@ export function App() {
       if (el) {
         el.scrollIntoView({ behavior: 'smooth' });
       }
-      window.history.pushState({}, '', href);
+      window.history.pushState({}, '', withBase(href));
       return;
     }
 
     const [pathPart, hashPart] = href.split('#');
     const normalized = normalizePathname(pathPart || '/');
 
-    window.history.pushState({}, '', href);
+    window.history.pushState({}, '', withBase(href));
     setCurrentRoute(normalized);
 
     if (hashPart) {
@@ -130,7 +153,7 @@ export function App() {
     const href = anchor.getAttribute('href');
     if (!href) return;
 
-    // Allow target="_blank", mailto:, tel:, and static asset downloads (.pdf, .jpg) to work natively
+    // Allow target="_blank", mailto:, tel:, and static asset downloads (.pdf, .jpg, /menus/) to work natively
     if (
       anchor.getAttribute('target') === '_blank' ||
       href.startsWith('http://') ||
@@ -139,7 +162,10 @@ export function App() {
       href.startsWith('tel:') ||
       href.endsWith('.pdf') ||
       href.endsWith('.jpg') ||
-      href.endsWith('.webp')
+      href.endsWith('.webp') ||
+      href.includes('/menus/') ||
+      href.includes('/images/') ||
+      href.includes('/videos/')
     ) {
       return;
     }
@@ -162,7 +188,7 @@ export function App() {
         onClick={handleMainClick}
       >
         {currentRoute === '/' && <HeroSection onNavigate={navigate} />}
-        <div dangerouslySetInnerHTML={{ __html: pageEntry?.mainHtml ?? '' }} />
+        <div dangerouslySetInnerHTML={{ __html: resolveAssetPaths(pageEntry?.mainHtml ?? '') }} />
       </main>
       <Footer onNavigate={navigate} />
       <CookieConsent onNavigate={navigate} />

@@ -9,6 +9,8 @@ import {
   VALID_ROUTES,
   normalizePathname,
   validateNewsletterEmail,
+  withBase,
+  BASE_URL,
 } from './siteConfig';
 
 test('normalizePathname normalizes trailing slashes, query strings, and hashes', () => {
@@ -42,4 +44,12 @@ test('site configuration constants match original site structure', () => {
   assert.equal(EXPLORE_LINKS.length, 12);
   assert.equal(OPENING_HOURS.length, 7);
   assert.equal(VALID_ROUTES.length, 23);
+});
+
+test('withBase properly handles absolute and relative asset paths', () => {
+  assert.equal(typeof BASE_URL, 'string');
+  assert.equal(withBase('https://example.com/photo.jpg'), 'https://example.com/photo.jpg');
+  assert.equal(withBase('#target'), '#target');
+  assert.ok(withBase('/images/test.webp').includes('images/test.webp'));
+  assert.ok(ANNOUNCEMENT.image.src.includes('images/interiors/lounge-armchairs.webp'));
 });

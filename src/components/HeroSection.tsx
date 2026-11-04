@@ -141,6 +141,8 @@ function SakuraPetals() {
 }
 
 export function HeroSection({ onNavigate }: { onNavigate: (href: string) => void }) {
+  const baseUrl = import.meta.env.BASE_URL;
+
   return (
     <section className="relative min-h-screen min-h-[100svh] flex items-center justify-center overflow-hidden bg-sumi pt-20 pb-12">
       <video
@@ -150,11 +152,11 @@ export function HeroSection({ onNavigate }: { onNavigate: (href: string) => void
         loop
         playsInline
         preload="auto"
-        poster="/videos/azuki-hero-poster.jpg"
+        poster={`${baseUrl}videos/azuki-hero-poster.jpg`}
         aria-hidden="true"
       >
-        <source src="/videos/azuki-hero-mobile.mp4" media="(max-width: 768px)" type="video/mp4" />
-        <source src="/videos/azuki-hero.mp4" type="video/mp4" />
+        <source src={`${baseUrl}videos/azuki-hero-mobile.mp4`} media="(max-width: 768px)" type="video/mp4" />
+        <source src={`${baseUrl}videos/azuki-hero.mp4`} type="video/mp4" />
       </video>
 
       <div className="absolute inset-0 bg-gradient-to-b from-sumi/80 via-sumi/60 to-sumi" />

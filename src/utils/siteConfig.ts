@@ -1,7 +1,19 @@
+export const BASE_URL: string = import.meta.env?.BASE_URL ?? '/';
+
+export function withBase(path: string): string {
+  if (!path) return path;
+  if (/^(?:[a-z]+:)?\/\//i.test(path) || path.startsWith('data:') || path.startsWith('blob:') || path.startsWith('#')) {
+    return path;
+  }
+  const base = (import.meta.env?.BASE_URL ?? '/').replace(/\/$/, '');
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `${base}${cleanPath}`;
+}
+
 export const ANNOUNCEMENT = {
   active: true,
   image: {
-    src: '/images/interiors/lounge-armchairs.webp',
+    src: withBase('/images/interiors/lounge-armchairs.webp'),
     alt: 'Velvet armchairs and low tables in the lounge at The Azuki Room',
   },
   kicker: 'Now Taking',
@@ -96,7 +108,13 @@ export const VALID_ROUTES = [
 ] as const;
 
 export function normalizePathname(pathname: string): string {
-  const withoutHash = pathname.split('#')[0].split('?')[0];
+  const base = (import.meta.env?.BASE_URL ?? '/').replace(/\/$/, '');
+  let withoutHash = pathname.split('#')[0].split('?')[0];
+
+  if (base && withoutHash.startsWith(base)) {
+    withoutHash = withoutHash.slice(base.length);
+  }
+
   if (!withoutHash || withoutHash === '/') return '/';
   const cleaned = withoutHash.endsWith('/') ? withoutHash.slice(0, -1) : withoutHash;
   return cleaned.startsWith('/') ? cleaned : `/${cleaned}`;
